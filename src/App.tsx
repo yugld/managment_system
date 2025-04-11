@@ -1,8 +1,23 @@
+import NavBar from '@components/navBar/NavBar';
+import BoardIdPage from '@pages/BoardIdPage';
+import BoardsPage from '@pages/BoardsPage';
+import IssuesPage from '@pages/IssuesPage';
+import NotFound from '@pages/NotFound';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 function App() {
   return (
-    <>
-      <p className="text-xl font-bold underline">dsdsd</p>
-    </>
+    <BrowserRouter>
+      <NavBar />
+
+      <Routes>
+        <Route path="/" element={<BoardsPage />} />
+        <Route path="/boards" element={<BoardsPage />} />
+        <Route path="/board/:id" element={<BoardIdPage />} />
+        <Route path="/issues" element={<IssuesPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
