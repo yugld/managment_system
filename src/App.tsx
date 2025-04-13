@@ -9,7 +9,6 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar />
-
       <Routes>
         <Route path="/" element={<BoardsPage />} />
         <Route path="/boards" element={<BoardsPage />} />
