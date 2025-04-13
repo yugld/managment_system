@@ -4,18 +4,19 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation, Link } from 'react-router-dom';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Priority, Status, UpdateTaskRequest } from '@store/types';
 import {
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useGetUsersQuery,
   useGetBoardsQuery,
+  useGetTaskByIdQuery,
 } from '@store/api';
 import Avatar from '@mui/material/Avatar';
 
@@ -28,11 +29,24 @@ interface ModalTaskProps {
 
 export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   const [params] = useSearchParams();
-  const id = params.get('id');
+  const boardIdFromUrl = params.get('id');
+  const { pathname } = useLocation();
   const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
   const { data: users } = useGetUsersQuery();
   const { data: boards } = useGetBoardsQuery();
+  const { data: taskDataFromApi, isLoading } = useGetTaskByIdQuery(taskId!, {
+    skip: !taskId,
+  });
+
+  const [taskData, setTaskData] = useState<UpdateTaskRequest>({
+    title: '',
+    description: '',
+    priority: undefined,
+    status: undefined,
+    assigneeId: undefined,
+    boardId: undefined,
+  });
 
   const [errors, setErrors] = useState({
     title: false,
@@ -42,6 +56,26 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
     assigneeId: false,
     boardId: false,
   });
+
+  useEffect(() => {
+    if (taskId && taskDataFromApi) {
+      const board = boards?.find((b) => b.name === taskDataFromApi.boardName);
+
+      setTaskData({
+        title: taskDataFromApi.title,
+        description: taskDataFromApi.description,
+        priority: taskDataFromApi.priority,
+        status: taskDataFromApi.status,
+        assigneeId: taskDataFromApi.assignee.id,
+        boardId: board ? board.id : undefined,
+      });
+    } else if (boardIdFromUrl) {
+      setTaskData((prevData) => ({
+        ...prevData,
+        boardId: Number(boardIdFromUrl),
+      }));
+    }
+  }, [taskId, boardIdFromUrl, taskDataFromApi, boards]);
 
   const validateForm = () => {
     const newErrors = {
@@ -69,18 +103,13 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
     onClose();
   };
 
-  const [taskData, setTaskData] = useState<UpdateTaskRequest>({
-    title: '',
-    description: '',
-    priority: undefined,
-    status: undefined,
-    assigneeId: undefined,
-    boardId: undefined,
-  });
+  if (isLoading) {
+    return <div>isLoading...</div>;
+  }
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{id ? 'Редактировать' : 'Добавить'} Задачу</DialogTitle>
+      <DialogTitle>{taskId ? 'Редактировать' : 'Добавить'} Задачу</DialogTitle>
       <DialogContent>
         <TextField
           label="Название задачи"
@@ -104,6 +133,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
           }
           error={errors.description}
         />
+
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Проект</InputLabel>
           <Select
@@ -113,6 +143,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
             }
             label="Проект"
             error={errors.boardId}
+            disabled={!!boardIdFromUrl}
           >
             {boards?.map((board) => (
               <MenuItem key={board.id} value={board.id}>
@@ -121,6 +152,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
             ))}
           </Select>
         </FormControl>
+
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Приоритет</InputLabel>
           <Select
@@ -177,9 +209,20 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Перейти к доске</Button>
+        {pathname === '/issues' && taskId ? (
+          <Button
+            component={Link}
+            to={`/board/${taskData.boardId}`}
+            sx={{ mr: 'auto' }}
+            onClick={onClose}
+          >
+            Перейти к доске
+          </Button>
+        ) : (
+          ''
+        )}
         <Button onClick={handleSubmit}>
-          {id ? 'Сохранить' : 'Создать'} Задачу
+          {taskId ? 'Сохранить' : 'Создать'} Задачу
         </Button>
       </DialogActions>
     </Dialog>

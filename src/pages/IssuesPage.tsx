@@ -21,9 +21,15 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import { Status } from '@store/types';
+import {
+  Status,
+  Priority,
+  GetBoardsResponse,
+  GetUsersResponse,
+} from '@store/types';
+import ModalTask from '@components/ModalTask';
 
-const TaskPage = () => {
+const IssuesPage = () => {
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
   const [boardFilter, setBoardFilter] = useState<number | 'all'>('all');
   const [searchAssignee, setSearchAssignee] = useState('');
@@ -49,7 +55,12 @@ const TaskPage = () => {
     return matchesStatus && matchesBoard && matchesAssignee && matchesSearch;
   });
 
-  const handleOpenTaskModal = (taskId: number) => {
+  const handleCreateTask = () => {
+    setSelectedTask(null);
+    setOpenModal(true);
+  };
+
+  const handleEditTask = (taskId: number) => {
     const task = tasks?.find((t) => t.id === taskId);
     setSelectedTask(task);
     setOpenModal(true);
@@ -115,7 +126,7 @@ const TaskPage = () => {
           <div key={task.id}>
             <ListItem
               button
-              onClick={() => handleOpenTaskModal(task.id)}
+              onClick={() => handleEditTask(task.id)}
               alignItems="flex-start"
             >
               <ListItemText
@@ -148,11 +159,7 @@ const TaskPage = () => {
                         <Avatar
                           alt={task.assignee.fullName}
                           src={task.assignee.avatarUrl || ''}
-                          sx={{
-                            width: 20,
-                            height: 20,
-                            marginRight: 1,
-                          }}
+                          sx={{ width: 20, height: 20, marginRight: 1 }}
                         />
                         <Typography
                           component="span"
@@ -196,18 +203,24 @@ const TaskPage = () => {
           justifyContent: 'flex-end',
           position: 'sticky',
           bottom: 20,
+          right: 20,
           zIndex: 1,
         }}
       >
-        <Button
-          variant="contained"
-          // onClick={}
-        >
+        <Button variant="contained" onClick={handleCreateTask}>
           Создать задачу
         </Button>
       </Box>
+
+      {openModal && (
+        <ModalTask
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          taskId={selectedTask?.id}
+        />
+      )}
     </Box>
   );
 };
 
-export default TaskPage;
+export default IssuesPage;
