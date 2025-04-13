@@ -17,6 +17,7 @@ import {
   useGetUsersQuery,
   useGetBoardsQuery,
 } from '@store/api';
+import Avatar from '@mui/material/Avatar';
 
 interface ModalTaskProps {
   open: boolean;
@@ -162,7 +163,14 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
           >
             {users?.map((user) => (
               <MenuItem key={user.id} value={user.id}>
-                {user.fullName}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar
+                    alt={user.fullName}
+                    src={user.avatarUrl}
+                    style={{ marginRight: '8px' }}
+                  />
+                  {user.fullName}
+                </div>
               </MenuItem>
             ))}
           </Select>
