@@ -1,5 +1,9 @@
+import { useParams } from 'react-router-dom';
+
 function BoardIdPage() {
-  return <>Board Id Page</>;
+  const { id } = useParams();
+  const boardId = Number(id);
+  return <>Board {boardId} Id Page</>;
 }
 
 export default BoardIdPage;

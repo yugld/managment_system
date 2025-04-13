@@ -121,8 +121,8 @@ const api = createApi({
 
 export const {
   useGetBoardsQuery,
-  useGetTasksQuery,
   useGetBoardTasksQuery,
+  useGetTasksQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useGetTaskByIdQuery,

@@ -1,9 +1,8 @@
 import { useGetBoardsQuery } from '@store/api';
+import { Link } from 'react-router-dom';
 
 function BoardsPage() {
   const { data: boards, error, isLoading } = useGetBoardsQuery();
-
-  if (isLoading) return <div>Loading...</div>;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -22,6 +21,7 @@ function BoardsPage() {
         {boards?.map((board) => (
           <li key={board.id}>
             {board.name} (Задач: {board.taskCount})
+            <Link to={`/board/${board.id}`}>LINK</Link>
           </li>
         ))}
       </ul>
