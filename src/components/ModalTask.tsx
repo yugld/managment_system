@@ -10,7 +10,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
-import { UpdateTaskRequest } from '@store/types';
+import { Priority, Status, UpdateTaskRequest } from '@store/types';
 import {
   useCreateTaskMutation,
   useUpdateTaskMutation,
@@ -71,10 +71,10 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   const [taskData, setTaskData] = useState<UpdateTaskRequest>({
     title: '',
     description: '',
-    priority: '',
-    status: '',
-    assigneeId: '',
-    boardId: '',
+    priority: undefined,
+    status: undefined,
+    assigneeId: undefined,
+    boardId: undefined,
   });
 
   return (
@@ -108,7 +108,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
           <Select
             value={taskData.boardId}
             onChange={(e) =>
-              setTaskData({ ...taskData, boardId: e.target.value })
+              setTaskData({ ...taskData, boardId: Number(e.target.value) })
             }
             label="Проект"
             error={errors.boardId}
@@ -125,7 +125,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
           <Select
             value={taskData.priority}
             onChange={(e) =>
-              setTaskData({ ...taskData, priority: e.target.value })
+              setTaskData({ ...taskData, priority: e.target.value as Priority })
             }
             label="Приоритет"
             error={errors.priority}
@@ -140,7 +140,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
           <Select
             value={taskData.status}
             onChange={(e) =>
-              setTaskData({ ...taskData, status: e.target.value })
+              setTaskData({ ...taskData, status: e.target.value as Status })
             }
             label="Статус"
             error={errors.status}
@@ -155,7 +155,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
           <Select
             value={taskData.assigneeId}
             onChange={(e) =>
-              setTaskData({ ...taskData, assigneeId: e.target.value })
+              setTaskData({ ...taskData, assigneeId: Number(e.target.value) })
             }
             label="Исполнитель"
             error={errors.assigneeId}
