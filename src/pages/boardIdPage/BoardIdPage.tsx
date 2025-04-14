@@ -18,9 +18,11 @@ import Loader from '@components/Loader';
 function BoardIdPage() {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
-  const { data: boardTasks, isLoading: isTasksLoading } =
-    useGetBoardTasksQuery(id);
-  const { data: boards, isLoading: isBoardsLoading } = useGetBoardsQuery();
+  const { data: boardTasks, isLoading: isTasksLoading } = useGetBoardTasksQuery(
+    Number(id)
+  );
+  const { data: boards, isLoading: isBoardsLoading } =
+    useGetBoardsQuery(undefined);
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
   const [tasks, setTasks] = useState<{
     [key in Status]: GetTasksOnBoardResponse[];
@@ -42,7 +44,7 @@ function BoardIdPage() {
   useEffect(() => {
     if (boardTasks) {
       const groupedTasks = boardTasks.reduce(
-        (acc, task) => {
+        (acc: Record<Status, GetTasksOnBoardResponse[]>, task) => {
           acc[task.status].push(task);
           return acc;
         },

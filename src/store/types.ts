@@ -73,6 +73,7 @@ export interface UpdateTaskRequest {
   description: string;
   status?: Status;
   priority?: Priority;
+  boardId?: number;
 }
 
 export interface UpdateTaskResponse {

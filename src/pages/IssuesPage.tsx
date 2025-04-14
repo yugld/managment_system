@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import {
-  useGetTasksQuery,
-  useCreateTaskMutation,
-  useGetBoardsQuery,
-  useGetUsersQuery,
-} from '@store/api';
+import { useGetTasksQuery, useGetBoardsQuery } from '@store/api';
 import {
   TextField,
   MenuItem,
@@ -17,12 +12,7 @@ import {
   Typography,
   Paper,
 } from '@mui/material';
-import {
-  Status,
-  Priority,
-  GetBoardsResponse,
-  GetUsersResponse,
-} from '@store/types';
+import { Status } from '@store/types';
 import ModalTask from '@components/ModalTask';
 import CreateTaskButton from '@components/CreateTaskButton';
 import Loader from '@components/Loader';
@@ -33,11 +23,9 @@ const IssuesPage = () => {
   const [searchAssignee, setSearchAssignee] = useState('');
   const [search, setSearch] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<any | null>(null);
-  const { data: boards } = useGetBoardsQuery();
-  const { data: users } = useGetUsersQuery();
-  const [createTask] = useCreateTaskMutation();
-  const { data: tasks, refetch, isLoading } = useGetTasksQuery();
+  const [selectedTask, setSelectedTask] = useState<number | null>(null);
+  const { data: boards } = useGetBoardsQuery(undefined);
+  const { data: tasks, isLoading } = useGetTasksQuery(undefined);
 
   if (isLoading) return <Loader />;
 
@@ -54,14 +42,9 @@ const IssuesPage = () => {
     return matchesStatus && matchesBoard && matchesAssignee && matchesSearch;
   });
 
-  const handleCreateTask = () => {
-    setSelectedTask(null);
-    setOpenModal(true);
-  };
-
   const handleEditTask = (taskId: number) => {
     const task = tasks?.find((t) => t.id === taskId);
-    setSelectedTask(task);
+    if (task) setSelectedTask(task.id);
     setOpenModal(true);
   };
 
@@ -201,7 +184,7 @@ const IssuesPage = () => {
         <ModalTask
           open={openModal}
           onClose={() => setOpenModal(false)}
-          taskId={selectedTask?.id}
+          taskId={selectedTask || 0}
         />
       )}
     </>

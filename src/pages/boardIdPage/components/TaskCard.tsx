@@ -1,6 +1,7 @@
 import { Avatar, Box, Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
 import { GetTasksOnBoardResponse } from '@store/types';
+import { useEffect, useRef } from 'react';
 
 interface TaskCardProps {
   task: GetTasksOnBoardResponse;
@@ -24,9 +25,17 @@ function TaskCard({ task, onEdit }: TaskCardProps) {
       .toUpperCase();
   };
 
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (boxRef.current) {
+      drag(boxRef.current);
+    }
+  }, [drag]);
+
   return (
     <Box
-      ref={drag}
+      ref={boxRef}
       sx={{
         p: 2,
         mb: 2,

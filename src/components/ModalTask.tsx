@@ -10,7 +10,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useState, useEffect } from 'react';
-import { Priority, Status, UpdateTaskRequest } from '@store/types';
+import {
+  CreateTaskRequest,
+  Priority,
+  Status,
+  UpdateTaskRequest,
+} from '@store/types';
 import {
   useCreateTaskMutation,
   useUpdateTaskMutation,
@@ -20,6 +25,7 @@ import {
 } from '@store/api';
 import Avatar from '@mui/material/Avatar';
 import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 interface ModalTaskProps {
   open: boolean;
@@ -33,12 +39,18 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   const { pathname } = useLocation();
   const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
-  const { data: users } = useGetUsersQuery();
-  const { data: boards } = useGetBoardsQuery();
-  const { data: taskDataFromApi, isLoading } = useGetTaskByIdQuery(taskId!, {
-    skip: !taskId,
-  });
-  const boardIdFromStore = useSelector((state) => state.board.boardId);
+  const { data: users } = useGetUsersQuery(undefined);
+  const { data: boards } = useGetBoardsQuery(undefined);
+  const { data: taskDataFromApi, isLoading } = useGetTaskByIdQuery(
+    taskId ?? 0,
+    {
+      skip: taskId === undefined,
+    }
+  );
+
+  const boardIdFromStore = useSelector(
+    (state: RootState) => state.board.boardId
+  );
   const [taskData, setTaskData] = useState<UpdateTaskRequest>({
     title: '',
     description: '',
@@ -101,7 +113,10 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
     if (taskId) {
       await updateTask({ id: taskId, data: taskData });
     } else {
-      await createTask(taskData);
+      if (!taskData.assigneeId) {
+        throw new Error('assigneeId is required for creating a task');
+      }
+      await createTask(taskData as CreateTaskRequest);
     }
     onClose();
   };

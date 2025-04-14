@@ -4,7 +4,7 @@ import { Typography, Box, Paper } from '@mui/material';
 import Loader from '@components/Loader';
 
 function BoardsPage() {
-  const { data, isLoading } = useGetBoardsQuery();
+  const { data, isLoading } = useGetBoardsQuery(undefined);
 
   if (isLoading) return <Loader />;
 

@@ -21,7 +21,7 @@ const api = createApi({
   tagTypes: ['Boards', 'Tasks', 'Teams', 'Users'],
   endpoints: (builder) => ({
     // BOARDS
-    getBoards: builder.query<GetBoardsResponse[], void>({
+    getBoards: builder.query<GetBoardsResponse[], undefined>({
       query: () => '/boards',
       transformResponse: (rawResult: { data: GetBoardsResponse[] }) =>
         rawResult.data,
@@ -36,7 +36,7 @@ const api = createApi({
     }),
 
     // TASKS
-    getTasks: builder.query<GetTasksResponse[], void>({
+    getTasks: builder.query<GetTasksResponse[], undefined>({
       query: () => '/tasks',
       transformResponse: (rawResult: { data: GetTasksResponse[] }) =>
         rawResult.data,
@@ -84,7 +84,7 @@ const api = createApi({
     }),
 
     updateTaskStatus: builder.mutation<
-      void,
+      undefined,
       { taskId: number; data: UpdateTaskStatusRequest }
     >({
       query: ({ taskId, data }) => ({
@@ -96,7 +96,7 @@ const api = createApi({
     }),
 
     // TEAMS
-    getTeams: builder.query<GetTeamsResponse[], void>({
+    getTeams: builder.query<GetTeamsResponse[], undefined>({
       query: () => '/teams',
       providesTags: ['Teams'],
     }),
@@ -106,7 +106,7 @@ const api = createApi({
     }),
 
     // USERS
-    getUsers: builder.query<GetUsersResponse[], void>({
+    getUsers: builder.query<GetUsersResponse[], undefined>({
       query: () => '/users',
       transformResponse: (rawResult: { data: GetUsersResponse[] }) =>
         rawResult.data,
