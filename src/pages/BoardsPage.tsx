@@ -1,31 +1,48 @@
 import { useGetBoardsQuery } from '@store/api';
 import { Link } from 'react-router-dom';
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  ListItem,
+  ListItemText,
+  Divider,
+  List,
+} from '@mui/material';
 
 function BoardsPage() {
-  const { data: boards, error, isLoading } = useGetBoardsQuery();
+  const { data } = useGetBoardsQuery();
 
-  if (isLoading) return <div>Loading...</div>;
-
-  if (error) {
-    const errorMessage = error.toString();
-    return <div>Error: {errorMessage}</div>;
-  }
-
-  if (!Array.isArray(boards)) {
-    return <div>Unexpected data format. Expected an array.</div>;
-  }
   return (
-    <div>
-      <h2>Список досок</h2>
-      <ul>
-        {boards?.map((board) => (
-          <li key={board.id}>
-            {board.name} (Задач: {board.taskCount})
-            <Link to={`/board/${board.id}`}>LINK</Link>
-          </li>
+    <Container>
+      <List display="flex" flexDirection="column" gap={1}>
+        {data.map((board) => (
+          <div key={board.id}>
+            <ListItem button>
+              <ListItemText>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Box>
+                    <Typography variant="h6">{board.name}</Typography>
+                    <Typography variant="body2" color="textSecondary" paragraph>
+                      {board.description}
+                    </Typography>
+                  </Box>
+                  <Link to={`/board/${board.id}`}>Перейти к проекту</Link>
+                </Box>
+              </ListItemText>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+          </div>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 }
 

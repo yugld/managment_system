@@ -20,6 +20,7 @@ import {
   Avatar,
   Typography,
   Divider,
+  Container,
 } from '@mui/material';
 import {
   Status,
@@ -67,7 +68,7 @@ const IssuesPage = () => {
   };
 
   return (
-    <Box>
+    <Container maxWidth="lg" sx={{ p: 3 }}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
@@ -219,7 +220,7 @@ const IssuesPage = () => {
           taskId={selectedTask?.id}
         />
       )}
-    </Box>
+    </Container>
   );
 };
 
