@@ -41,12 +41,13 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   const [updateTask] = useUpdateTaskMutation();
   const { data: users } = useGetUsersQuery(undefined);
   const { data: boards } = useGetBoardsQuery(undefined);
-  const { data: taskDataFromApi, isLoading } = useGetTaskByIdQuery(
-    taskId ?? 0,
-    {
-      skip: taskId === undefined,
-    }
-  );
+  const {
+    data: taskDataFromApi,
+    isLoading,
+    refetch,
+  } = useGetTaskByIdQuery(taskId ?? 0, {
+    skip: taskId === undefined,
+  });
 
   const boardIdFromStore = useSelector(
     (state: RootState) => state.board.boardId
@@ -70,6 +71,11 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   });
 
   const isBoardPage = pathname.includes('/board/');
+  useEffect(() => {
+    if (open && taskId) {
+      refetch();
+    }
+  }, [open, taskId, refetch]);
 
   useEffect(() => {
     if (taskId && taskDataFromApi) {
