@@ -1,10 +1,7 @@
-import ModalTask from '@components/ModalTask';
-import { useState } from 'react';
+import CreateTaskButton from '@components/CreateTaskButton';
 import { Link } from 'react-router-dom';
 
 function NavBar() {
-  const [openModal, setOpenModal] = useState(false);
-
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow">
@@ -14,18 +11,9 @@ function NavBar() {
             <Link to="/boards">Проекты</Link>
           </nav>
 
-          <button
-            className="rounded-xl bg-sky-500 px-5 py-2.5 font-medium text-white hover:bg-sky-600 transition"
-            onClick={() => setOpenModal(true)}
-          >
-            Новая задача
-          </button>
+          <CreateTaskButton />
         </div>
       </header>
-
-      {openModal && (
-        <ModalTask open={openModal} onClose={() => setOpenModal(false)} />
-      )}
     </>
   );
 }

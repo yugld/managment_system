@@ -39,7 +39,6 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
     skip: !taskId,
   });
   const boardIdFromStore = useSelector((state) => state.board.boardId);
-  console.log(boardIdFromStore);
   const [taskData, setTaskData] = useState<UpdateTaskRequest>({
     title: '',
     description: '',

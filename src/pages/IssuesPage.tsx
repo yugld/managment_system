@@ -30,6 +30,7 @@ import {
   GetUsersResponse,
 } from '@store/types';
 import ModalTask from '@components/ModalTask';
+import CreateTaskButton from '@components/CreateTaskButton';
 
 const IssuesPage = () => {
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
@@ -185,20 +186,8 @@ const IssuesPage = () => {
         ))}
       </Box>
 
-      <Box
-        sx={{
-          mt: 3,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          position: 'sticky',
-          bottom: 20,
-          right: 20,
-          zIndex: 1,
-        }}
-      >
-        <Button variant="contained" onClick={handleCreateTask}>
-          Создать задачу
-        </Button>
+      <Box className="mt-3 flex justify-end sticky bottom-5 right-5 z-[1]">
+        <CreateTaskButton />
       </Box>
 
       {openModal && (
