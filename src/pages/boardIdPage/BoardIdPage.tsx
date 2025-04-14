@@ -10,11 +10,15 @@ import ModalTask from '@components/ModalTask';
 import BoardColumn from './components/BoardColumn';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setBoardId } from '@store/boardIdSlice';
 
 function BoardIdPage() {
-  const { data: boardTasks } = useGetBoardTasksQuery(1);
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch();
+  const { data: boardTasks } = useGetBoardTasksQuery(id);
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
-
   const [tasks, setTasks] = useState<{
     [key in Status]: GetTasksOnBoardResponse[];
   }>({
@@ -22,10 +26,15 @@ function BoardIdPage() {
     InProgress: [],
     Done: [],
   });
-
   const [openModal, setOpenModal] = useState(false);
   const [selectedTask, setSelectedTask] =
     useState<GetTasksOnBoardResponse | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(setBoardId(Number(id)));
+    }
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (boardTasks) {

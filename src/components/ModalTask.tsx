@@ -19,6 +19,7 @@ import {
   useGetTaskByIdQuery,
 } from '@store/api';
 import Avatar from '@mui/material/Avatar';
+import { useSelector } from 'react-redux';
 
 interface ModalTaskProps {
   open: boolean;
@@ -29,7 +30,6 @@ interface ModalTaskProps {
 
 export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   const [params] = useSearchParams();
-  const boardIdFromUrl = params.get('id');
   const { pathname } = useLocation();
   const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
@@ -38,7 +38,8 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
   const { data: taskDataFromApi, isLoading } = useGetTaskByIdQuery(taskId!, {
     skip: !taskId,
   });
-
+  const boardIdFromStore = useSelector((state) => state.board.boardId);
+  console.log(boardIdFromStore);
   const [taskData, setTaskData] = useState<UpdateTaskRequest>({
     title: '',
     description: '',
@@ -57,6 +58,8 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
     boardId: false,
   });
 
+  const isBoardPage = pathname.includes('/board/');
+
   useEffect(() => {
     if (taskId && taskDataFromApi) {
       const board = boards?.find((b) => b.name === taskDataFromApi.boardName);
@@ -67,15 +70,16 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
         priority: taskDataFromApi.priority,
         status: taskDataFromApi.status,
         assigneeId: taskDataFromApi.assignee.id,
-        boardId: board ? board.id : undefined,
+        boardId: board ? board.id : (boardIdFromStore ?? null),
       });
-    } else if (boardIdFromUrl) {
+    } else if (isBoardPage) {
+      const boardIdFromUrl = params.get('id');
       setTaskData((prevData) => ({
         ...prevData,
-        boardId: Number(boardIdFromUrl),
+        boardId: boardIdFromUrl ? Number(boardIdFromUrl) : boardIdFromStore,
       }));
     }
-  }, [taskId, boardIdFromUrl, taskDataFromApi, boards]);
+  }, [taskId, taskDataFromApi, boards, isBoardPage, boardIdFromStore, params]);
 
   const validateForm = () => {
     const newErrors = {
@@ -143,7 +147,7 @@ export default function ModalTask({ open, onClose, taskId }: ModalTaskProps) {
             }
             label="Проект"
             error={errors.boardId}
-            disabled={!!boardIdFromUrl}
+            disabled={isBoardPage}
           >
             {boards?.map((board) => (
               <MenuItem key={board.id} value={board.id}>
