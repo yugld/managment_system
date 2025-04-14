@@ -5,3 +5,11 @@
   "status": "Done",
   "title": "string"
 }
+ 
+ react-dnd подходит 19 React
+
+TODO:
+- loader
+- scroll
+- pagination
+- draft

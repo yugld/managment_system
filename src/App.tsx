@@ -1,5 +1,5 @@
 import NavBar from '@components/navBar/NavBar';
-import BoardIdPage from '@pages/BoardIdPage';
+import BoardIdPage from '@pages/boardIdPage/BoardIdPage';
 import BoardsPage from '@pages/BoardsPage';
 import IssuesPage from '@pages/IssuesPage';
 import NotFound from '@pages/NotFound';

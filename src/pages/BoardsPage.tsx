@@ -2,8 +2,6 @@ import { useGetBoardsQuery } from '@store/api';
 import { Link } from 'react-router-dom';
 import {
   Container,
-  Card,
-  CardContent,
   Typography,
   Box,
   ListItem,
@@ -18,7 +16,7 @@ function BoardsPage() {
   return (
     <Container>
       <List display="flex" flexDirection="column" gap={1}>
-        {data.map((board) => (
+        {data?.map((board) => (
           <div key={board.id}>
             <ListItem button>
               <ListItemText>
