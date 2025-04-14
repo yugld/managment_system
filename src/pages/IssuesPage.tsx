@@ -6,7 +6,6 @@ import {
   useGetUsersQuery,
 } from '@store/api';
 import {
-  Button,
   TextField,
   MenuItem,
   Select,
@@ -14,13 +13,8 @@ import {
   FormControl,
   Stack,
   Box,
-  List,
-  ListItem,
-  ListItemText,
   Avatar,
   Typography,
-  Divider,
-  Container,
   Paper,
 } from '@mui/material';
 import {
@@ -31,6 +25,7 @@ import {
 } from '@store/types';
 import ModalTask from '@components/ModalTask';
 import CreateTaskButton from '@components/CreateTaskButton';
+import Loader from '@components/Loader';
 
 const IssuesPage = () => {
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
@@ -39,11 +34,12 @@ const IssuesPage = () => {
   const [search, setSearch] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any | null>(null);
-
-  const { data: tasks, refetch } = useGetTasksQuery();
   const { data: boards } = useGetBoardsQuery();
   const { data: users } = useGetUsersQuery();
   const [createTask] = useCreateTaskMutation();
+  const { data: tasks, refetch, isLoading } = useGetTasksQuery();
+
+  if (isLoading) return <Loader />;
 
   const filteredTasks = tasks?.filter((task) => {
     const matchesStatus =
@@ -125,65 +121,76 @@ const IssuesPage = () => {
       </Stack>
 
       <Box display="flex" flexDirection="column" gap={2} mt={3}>
-        {filteredTasks?.map((task) => (
-          <Paper
-            key={task.id}
-            elevation={2}
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: '0.2s',
-              '&:hover': {
-                boxShadow: 4,
-              },
-            }}
-            onClick={() => handleEditTask(task.id)}
-          >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="flex-start"
+        {filteredTasks && filteredTasks.length > 0 ? (
+          filteredTasks?.map((task) => (
+            <Paper
+              key={task.id}
+              elevation={2}
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                cursor: 'pointer',
+                transition: '0.2s',
+                '&:hover': {
+                  boxShadow: 4,
+                },
+              }}
+              onClick={() => handleEditTask(task.id)}
             >
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {task.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {task.boardName}
-                </Typography>
-
-                <Box display="flex" alignItems="center" mt={1}>
-                  <Avatar
-                    alt={task.assignee.fullName}
-                    src={task.assignee.avatarUrl || ''}
-                    sx={{ width: 24, height: 24, mr: 1 }}
-                  />
-                  <Typography variant="body2" color="text.primary">
-                    {task.assignee.fullName}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Typography
-                variant="body2"
-                fontWeight={500}
-                sx={{
-                  color:
-                    task.status === 'Backlog'
-                      ? 'gray'
-                      : task.status === 'InProgress'
-                        ? 'orange'
-                        : task.status === 'Done'
-                          ? 'green'
-                          : 'text.primary',
-                }}
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="flex-start"
               >
-                {task.status}
-              </Typography>
-            </Box>
-          </Paper>
-        ))}
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {task.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {task.boardName}
+                  </Typography>
+
+                  <Box display="flex" alignItems="center" mt={1}>
+                    <Avatar
+                      alt={task.assignee.fullName}
+                      src={task.assignee.avatarUrl || ''}
+                      sx={{ width: 24, height: 24, mr: 1 }}
+                    />
+                    <Typography variant="body2" color="text.primary">
+                      {task.assignee.fullName}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  sx={{
+                    color:
+                      task.status === 'Backlog'
+                        ? 'gray'
+                        : task.status === 'InProgress'
+                          ? 'orange'
+                          : task.status === 'Done'
+                            ? 'green'
+                            : 'text.primary',
+                  }}
+                >
+                  {task.status}
+                </Typography>
+              </Box>
+            </Paper>
+          ))
+        ) : (
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            align="center"
+            sx={{ mt: 5 }}
+          >
+            Задачи не найдены
+          </Typography>
+        )}
       </Box>
 
       <Box className="mt-3 flex justify-end sticky bottom-5 right-5 z-[1]">

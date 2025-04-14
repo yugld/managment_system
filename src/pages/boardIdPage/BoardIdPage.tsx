@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import {
   useGetBoardsQuery,
   useGetBoardTasksQuery,
@@ -13,12 +13,14 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setBoardId } from '@store/boardIdSlice';
+import Loader from '@components/Loader';
 
 function BoardIdPage() {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
-  const { data: boardTasks } = useGetBoardTasksQuery(id);
-  const { data: boards } = useGetBoardsQuery();
+  const { data: boardTasks, isLoading: isTasksLoading } =
+    useGetBoardTasksQuery(id);
+  const { data: boards, isLoading: isBoardsLoading } = useGetBoardsQuery();
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
   const [tasks, setTasks] = useState<{
     [key in Status]: GetTasksOnBoardResponse[];
@@ -59,6 +61,8 @@ function BoardIdPage() {
     setSelectedTask(task || null);
     setOpenModal(true);
   };
+
+  if (isBoardsLoading || isTasksLoading) return <Loader />;
 
   return (
     <DndProvider backend={HTML5Backend}>

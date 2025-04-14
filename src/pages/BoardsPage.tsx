@@ -1,10 +1,12 @@
 import { useGetBoardsQuery } from '@store/api';
 import { Link } from 'react-router-dom';
-import { Container, Typography, Box, Button, Paper } from '@mui/material';
-import Layout from '@components/Layout';
+import { Typography, Box, Paper } from '@mui/material';
+import Loader from '@components/Loader';
 
 function BoardsPage() {
-  const { data } = useGetBoardsQuery();
+  const { data, isLoading } = useGetBoardsQuery();
+
+  if (isLoading) return <Loader />;
 
   return (
     <Box display="flex" flexDirection="column" gap={3}>
