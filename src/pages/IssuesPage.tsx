@@ -21,6 +21,7 @@ import {
   Typography,
   Divider,
   Container,
+  Paper,
 } from '@mui/material';
 import {
   Status,
@@ -68,7 +69,7 @@ const IssuesPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ p: 3 }}>
+    <>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
@@ -122,80 +123,67 @@ const IssuesPage = () => {
         </Box>
       </Stack>
 
-      <List sx={{ mt: 3 }}>
+      <Box display="flex" flexDirection="column" gap={2} mt={3}>
         {filteredTasks?.map((task) => (
-          <div key={task.id}>
-            <ListItem
-              button
-              onClick={() => handleEditTask(task.id)}
+          <Paper
+            key={task.id}
+            elevation={2}
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              cursor: 'pointer',
+              transition: '0.2s',
+              '&:hover': {
+                boxShadow: 4,
+              },
+            }}
+            onClick={() => handleEditTask(task.id)}
+          >
+            <Box
+              display="flex"
+              justifyContent="space-between"
               alignItems="flex-start"
             >
-              <ListItemText
-                primary={
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {task.title}
-                  </Typography>
-                }
-                secondary={
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                      }}
-                    >
-                      <Typography component="span" variant="body2">
-                        {task.boardName}
-                      </Typography>
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center', mt: 1 }}
-                      >
-                        <Avatar
-                          alt={task.assignee.fullName}
-                          src={task.assignee.avatarUrl || ''}
-                          sx={{ width: 20, height: 20, marginRight: 1 }}
-                        />
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          {task.assignee.fullName}
-                        </Typography>
-                      </Box>
-                    </Box>
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {task.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {task.boardName}
+                </Typography>
 
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{
-                        color:
-                          task.status === 'Backlog'
-                            ? 'gray'
-                            : task.status === 'InProgress'
-                              ? 'orange'
-                              : task.status === 'Done'
-                                ? 'green'
-                                : 'text.primary',
-                      }}
-                    >
-                      {task.status}
-                    </Typography>
-                  </Box>
-                }
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" />
-          </div>
+                <Box display="flex" alignItems="center" mt={1}>
+                  <Avatar
+                    alt={task.assignee.fullName}
+                    src={task.assignee.avatarUrl || ''}
+                    sx={{ width: 24, height: 24, mr: 1 }}
+                  />
+                  <Typography variant="body2" color="text.primary">
+                    {task.assignee.fullName}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{
+                  color:
+                    task.status === 'Backlog'
+                      ? 'gray'
+                      : task.status === 'InProgress'
+                        ? 'orange'
+                        : task.status === 'Done'
+                          ? 'green'
+                          : 'text.primary',
+                }}
+              >
+                {task.status}
+              </Typography>
+            </Box>
+          </Paper>
         ))}
-      </List>
+      </Box>
 
       <Box
         sx={{
@@ -220,7 +208,7 @@ const IssuesPage = () => {
           taskId={selectedTask?.id}
         />
       )}
-    </Container>
+    </>
   );
 };
 

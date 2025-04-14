@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Grid } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import {
   useGetBoardsQuery,
   useGetBoardTasksQuery,
@@ -18,6 +18,7 @@ function BoardIdPage() {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const { data: boardTasks } = useGetBoardTasksQuery(id);
+  const { data: boards } = useGetBoardsQuery();
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
   const [tasks, setTasks] = useState<{
     [key in Status]: GetTasksOnBoardResponse[];
@@ -61,19 +62,24 @@ function BoardIdPage() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container>
-        <Grid container spacing={2}>
+      <Box className="h-screen w-full overflow-x-auto">
+        <div className=" text-lg font-semibold">
+          {boards?.find((b) => b.id === Number(id))?.name ||
+            'Загрузка названия...'}
+        </div>
+
+        <Box className="flex gap-8 py-4 justify-start items-start w-full">
           {['Backlog', 'InProgress', 'Done'].map((status) => (
-            <Grid item xs={4} key={status}>
+            <div key={status} className="flex-1 min-w-[250px]">
               <BoardColumn
                 status={status as Status}
                 tasks={tasks[status as Status]}
                 onDrop={handleDrop}
                 onEdit={handleEditTask}
               />
-            </Grid>
+            </div>
           ))}
-        </Grid>
+        </Box>
 
         {openModal && (
           <ModalTask
@@ -82,7 +88,7 @@ function BoardIdPage() {
             taskId={selectedTask?.id}
           />
         )}
-      </Container>
+      </Box>
     </DndProvider>
   );
 }

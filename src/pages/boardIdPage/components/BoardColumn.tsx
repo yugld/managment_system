@@ -10,6 +10,12 @@ interface BoardColumnProps {
   onEdit: (taskId: number) => void;
 }
 
+const statusColors: Record<Status, string> = {
+  Backlog: '#facc15',
+  InProgress: '#3b82f6',
+  Done: '#10b981',
+};
+
 function BoardColumn({ status, tasks, onDrop, onEdit }: BoardColumnProps) {
   const [, drop] = useDrop({
     accept: 'TASK',
@@ -19,15 +25,11 @@ function BoardColumn({ status, tasks, onDrop, onEdit }: BoardColumnProps) {
   return (
     <Box
       ref={drop}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      p={2}
-      bgcolor="#f4f4f4"
-      borderRadius={2}
-      width={300}
+      className="flex flex-col shadow items-center py-2 bg-white rounded-lg"
     >
-      <Typography variant="h6">{status}</Typography>
+      <Typography variant="h6" sx={{ color: statusColors[status], m: 1 }}>
+        {status}
+      </Typography>
       <List>
         {tasks.map((task) => (
           <ListItem key={task.id} button>
