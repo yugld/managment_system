@@ -36,17 +36,10 @@ function TaskCard({ task, onEdit }: TaskCardProps) {
   return (
     <Box
       ref={boxRef}
-      sx={{
-        p: 2,
-        mb: 2,
-        border: '1px solid #ddd',
-        borderRadius: 2,
-        opacity: isDragging ? 0.5 : 1,
-        cursor: 'pointer',
-      }}
       onClick={() => {
         if (!isDragging) onEdit();
       }}
+      className={`w-full p-2 mb-2 border border-[#ddd] rounded-md cursor-pointer transition-opacity ${isDragging ? 'opacity-50' : 'opacity-100'}`}
     >
       <Typography variant="body1" fontWeight="bold">
         {task.title}
