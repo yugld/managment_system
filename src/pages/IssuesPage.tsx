@@ -16,6 +16,7 @@ import { Status } from '@store/types';
 import ModalTask from '@components/ModalTask';
 import CreateTaskButton from '@components/CreateTaskButton';
 import Loader from '@components/Loader';
+import EmptyPlaceholder from '@components/EmptyPlaceholder';
 
 const IssuesPage = () => {
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
@@ -165,14 +166,7 @@ const IssuesPage = () => {
             </Paper>
           ))
         ) : (
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            align="center"
-            sx={{ mt: 5 }}
-          >
-            Задачи не найдены
-          </Typography>
+          <EmptyPlaceholder message="Задачи не найдены" />
         )}
       </Box>
 

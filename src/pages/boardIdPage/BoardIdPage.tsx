@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setBoardId } from '@store/boardIdSlice';
 import Loader from '@components/Loader';
+import EmptyPlaceholder from '@components/EmptyPlaceholder';
 
 function BoardIdPage() {
   const { id } = useParams<{ id: string }>();
@@ -74,18 +75,22 @@ function BoardIdPage() {
             'Загрузка названия...'}
         </div>
 
-        <Box className="flex gap-8 py-4 justify-start items-start w-full">
-          {['Backlog', 'InProgress', 'Done'].map((status) => (
-            <div key={status} className="flex-1 min-w-[250px]">
-              <BoardColumn
-                status={status as Status}
-                tasks={tasks[status as Status]}
-                onDrop={handleDrop}
-                onEdit={handleEditTask}
-              />
-            </div>
-          ))}
-        </Box>
+        {boardTasks?.length === 0 ? (
+          <EmptyPlaceholder message="На этой доске пока нет задач" />
+        ) : (
+          <Box className="flex gap-8 py-4 justify-start items-start w-full">
+            {['Backlog', 'InProgress', 'Done'].map((status) => (
+              <div key={status} className="flex-1 min-w-[250px]">
+                <BoardColumn
+                  status={status as Status}
+                  tasks={tasks[status as Status]}
+                  onDrop={handleDrop}
+                  onEdit={handleEditTask}
+                />
+              </div>
+            ))}
+          </Box>
+        )}
 
         {openModal && (
           <ModalTask

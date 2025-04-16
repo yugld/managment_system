@@ -2,11 +2,14 @@ import { useGetBoardsQuery } from '@store/api';
 import { Link } from 'react-router-dom';
 import { Typography, Box, Paper } from '@mui/material';
 import Loader from '@components/Loader';
+import EmptyPlaceholder from '@components/EmptyPlaceholder';
 
 function BoardsPage() {
   const { data, isLoading } = useGetBoardsQuery(undefined);
 
   if (isLoading) return <Loader />;
+  if (!data || data.length === 0)
+    return <EmptyPlaceholder message="Проекты не найдены" />;
 
   return (
     <Box display="flex" flexDirection="column" gap={3}>
